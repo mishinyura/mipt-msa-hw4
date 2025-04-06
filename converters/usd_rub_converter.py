@@ -1,23 +1,10 @@
-import requests
 from converters import CurrencyConverter
+from converters.exchange_rate import BaseRateProvider
 
 class UsdRubConverter(CurrencyConverter):
-    def __init__(self):
-        self.rates = self.get_rates()
+    def __init__(self, rate_provider=None):
+        self.rate_provider = rate_provider or BaseRateProvider()
 
-    def get_rates(self):
-        response = requests.get("https://api.exchangerate-api.com/v4/latest/USD")
-        data = response.json()
-        return data['rates']
-    
-    def convert_usd_to_eur(self, amount):
-        print('This is not USD to EUR converter')
-
-    def convert_usd_to_gbp(self, amount):
-        print('This is not USD to GBP converter')
-
-    def convert_usd_to_rub(self, amount):
-        return amount * self.rates['RUB']
-
-    def convert_usd_to_cny(self, amount):
-        print('This is not USD to CNY converter')
+    def convert(self, amount):
+        rates = self.rate_provider.get_rates()
+        return amount * rates['RUB']
